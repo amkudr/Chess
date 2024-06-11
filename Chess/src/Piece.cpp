@@ -31,10 +31,16 @@ char Piece::getSymbol() const {
 }
 
 bool Piece::isPossibleMove(int x, int y) const {
+    /**
+     * Check if the move is possible by the piece
+     */
 
     return false;
 }
 
 vector<pair<int, int>> Piece::needToCheckWay(int x, int y) const {
+    /**
+     * Check if the way is clear for the piece to move
+     */
     return {};
 }
