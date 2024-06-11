@@ -1,6 +1,8 @@
 
 #include <sstream>
 #include "Engine.h"
+#include "Queen.h"
+#include "Bishop.h"
 
 Engine::Engine(const string &start) {
     int index = 0;
@@ -28,6 +30,18 @@ Engine::Engine(const string &start) {
                     m_board[col][row] = make_shared<King>(col, row, false);
                     black_king = dynamic_pointer_cast<King>(m_board[col][row]);
                     break;
+                case 'Q':
+                    m_board[col][row] = make_shared<Queen>(col, row, true);
+                    break;
+                case 'q':
+                    m_board[col][row] = make_shared<Queen>(col, row, false);
+                    break;
+                case 'B':
+                    m_board[col][row] = make_shared<Bishop>(col, row, true);
+                    break;
+                case 'b':
+                    m_board[col][row] = make_shared<Bishop>(col, row, false);
+                    break;
 
                 default:
                     m_board[col][row] = make_shared<Piece>(col, row, true); //TODO later
@@ -35,7 +49,6 @@ Engine::Engine(const string &start) {
             index++;
         }
     }
-
 
 }
 
@@ -55,6 +68,11 @@ string Engine::printBoard() {
 }
 
 int Engine::checkMove(string move) {
+    /**
+     * Check if the move is legal
+     * @param move - string with the move
+     * @return code response
+     */
     shared_ptr<Piece> piece = m_board[move[0] - 'a'][move[1] - '1'];
     if (piece == nullptr) {
         return 11;
@@ -75,10 +93,11 @@ int Engine::checkMove(string move) {
             return 21; //illegal movement
         }
     }
+    //Make the move
     movePiece(move[0] - 'a', move[1] - '1', move[2] - 'a', move[3] - '1');
 
-
     if (isCheck(false)) {
+        //if check undo
         movePiece(move[2] - 'a', move[3] - '1', move[0] - 'a', move[1] - '1');
         return 31;
     }
@@ -91,15 +110,22 @@ int Engine::checkMove(string move) {
 }
 
 bool Engine::isCheck(bool goodCheck) {
+    /**
+     * Check if the king is in check
+     * @param goodCheck - if true check if the enemy king is in check after the move
+     * @return true if the king is in check
+     */
     shared_ptr<King> king;
+    bool enemyColor = !white_turn;
     if (goodCheck) {
         king = white_turn ? black_king:white_king;
+        enemyColor = white_turn;
     }
     else king = white_turn ? white_king : black_king;
     if (king != nullptr){
         for (auto & i : m_board) {
             for (const auto & j : i) {
-                if (j != nullptr && j->isWhite() != white_turn) { //Check all enemy pieces
+                if (j != nullptr && j->isWhite() == enemyColor) { //Check all enemy pieces
                     if (j->isPossibleMove(king->getX(), king->getY())) { //If enemy piece can attack king
                         vector<pair<int, int>> way = j->needToCheckWay(king->getX(), king->getY()); //check if there is a flap fot the king
                         bool isCheck = true;
@@ -122,6 +148,13 @@ bool Engine::isCheck(bool goodCheck) {
 }
 
 void Engine::movePiece(int x_from, int y_from, int x_to, int y_to) {
+    /**
+     * Move piece from x_from, y_from to x_to, y_to
+     * @param x_from - x coordinate of the piece
+     * @param y_from - y coordinate of the piece
+     * @param x_to - x coordinate of the destination
+     * @param y_to - y coordinate of the destination
+     */
     shared_ptr<Piece> piece = m_board[x_from][y_from];
     m_board[x_to][y_to] = piece;
     m_board[x_from][y_from] = nullptr;

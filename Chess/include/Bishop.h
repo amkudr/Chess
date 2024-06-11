@@ -1,11 +1,12 @@
 
-#ifndef CHESS_QUEEN_H
-#define CHESS_QUEEN_H
+#ifndef CHESS_BISHOP_H
+#define CHESS_BISHOP_H
+
 #include "Piece.h"
 
-class Queen : public Piece {
+class Bishop : public Piece {
 public:
-    Queen(int x, int y, bool isWhite);
+    Bishop(int x, int y, bool isWhite);
 
     char getSymbol() const override;
 
@@ -14,4 +15,6 @@ public:
     vector<pair<int, int>> needToCheckWay(int x, int y) const override;
 };
 
-#endif //CHESS_QUEEN_H
+
+
+#endif //CHESS_BISHOP_H

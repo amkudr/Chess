@@ -6,8 +6,9 @@ int main()
 {
 
 //	string board = "R##rKBNR###############################################prnbqkbnr";
+	string board = "RNB#KBNR################################################rnbqkbnr";
 //	string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
-	string board = "##########K#############################################r#r#####";
+//	string board = "##########K#############################################r#r#####";
     Engine e(board);
     cout<<e.printBoard();
 
