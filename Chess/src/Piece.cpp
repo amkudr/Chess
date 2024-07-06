@@ -38,7 +38,7 @@ bool Piece::isPossibleMove(int x, int y) const {
     return false;
 }
 
-vector<pair<int, int>> Piece::needToCheckWay(int x, int y) const {
+vector<pair<int, int>> Piece::getPotentialRoadblocks(int x, int y) const {
     /**
      * Check if the way is clear for the piece to move
      */

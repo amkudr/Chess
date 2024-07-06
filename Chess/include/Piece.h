@@ -26,7 +26,7 @@ public:
 
     virtual bool isPossibleMove(int x, int y) const;
 
-    virtual vector<pair<int, int>> needToCheckWay(int x, int y) const;
+    virtual vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const;
 
 //    ~Piece();
 

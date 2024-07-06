@@ -11,7 +11,7 @@ public:
 
     bool isPossibleMove(int x, int y) const override;
 
-    vector<pair<int, int>> needToCheckWay(int x, int y) const override;
+    vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const override;
 };
 
 #endif //CHESS_QUEEN_H

@@ -8,6 +8,6 @@ bool King::isPossibleMove(int x, int y) const {
     return (abs(x - getX()) <= 1 && abs(y - getY()) <= 1);
 }
 
-vector<pair<int, int>> King::needToCheckWay(int x, int y) const {
+vector<pair<int, int>> King::getPotentialRoadblocks(int x, int y) const {
     return {};
 }

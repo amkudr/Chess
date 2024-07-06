@@ -15,7 +15,7 @@ bool Bishop::isPossibleMove(int x, int y) const {
     return false;
 }
 
-vector<pair<int, int>> Bishop::needToCheckWay(int x, int y) const {
+vector<pair<int, int>> Bishop::getPotentialRoadblocks(int x, int y) const {
     vector<pair<int, int>> result;
     int x1 = getX();
     int y1 = getY();

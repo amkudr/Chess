@@ -20,7 +20,7 @@ bool Rook::isPossibleMove(int x, int y) const {
     return false;
 }
 
-vector<pair<int, int>> Rook::needToCheckWay(int x, int y) const {
+vector<pair<int, int>> Rook::getPotentialRoadblocks(int x, int y) const {
     if (!isPossibleMove(x, y)) {
         return {};
     }

@@ -16,7 +16,7 @@ bool Queen::isPossibleMove(int x, int y) const {
     return abs(getX() - x) == abs(getY() - y);
 }
 
-vector<pair<int, int>> Queen::needToCheckWay(int x, int y) const {
+vector<pair<int, int>> Queen::getPotentialRoadblocks(int x, int y) const {
     vector<pair<int, int>> result;
     int x1 = getX();
     int y1 = getY();

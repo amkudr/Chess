@@ -87,7 +87,7 @@ int Engine::checkMove(string move) {
     if (!piece->isPossibleMove(move[2] - 'a', move[3] - '1')) {
         return 21;
     }
-    vector<pair<int, int>> way = piece->needToCheckWay(move[2] - 'a', move[3] - '1');
+    vector<pair<int, int>> way = piece->getPotentialRoadblocks(move[2] - 'a', move[3] - '1');
     for (auto &p: way) {
         if (m_board[p.first][p.second] != nullptr) {
             return 21; //illegal movement
@@ -127,7 +127,7 @@ bool Engine::isCheck(bool goodCheck) {
             for (const auto & j : i) {
                 if (j != nullptr && j->isWhite() == enemyColor) { //Check all enemy pieces
                     if (j->isPossibleMove(king->getX(), king->getY())) { //If enemy piece can attack king
-                        vector<pair<int, int>> way = j->needToCheckWay(king->getX(), king->getY()); //check if there is a flap fot the king
+                        vector<pair<int, int>> way = j->getPotentialRoadblocks(king->getX(), king->getY()); //check if there is a flap fot the king
                         bool isCheck = true;
                         for (auto &p: way) {
                             if (m_board[p.first][p.second] != nullptr) {
