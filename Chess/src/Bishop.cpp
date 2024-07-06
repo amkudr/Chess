@@ -9,10 +9,7 @@ char Bishop::getSymbol() const {
 }
 
 bool Bishop::isPossibleMove(int x, int y) const {
-    if (abs(x - getX()) == abs(y - getY())) {
-        return true;
-    }
-    return false;
+    return (abs(x - getX()) == abs(y - getY()));
 }
 
 vector<pair<int, int>> Bishop::getPotentialRoadblocks(int x, int y) const {
