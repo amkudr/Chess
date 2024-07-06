@@ -20,7 +20,6 @@ class Engine {
 public:
     explicit Engine(const string &start = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr");
     int checkMove(string move);
-//    Engine(const Engine&) = delete;
     Engine &operator=(const Engine &) = delete;
     string printBoard();
     void movePiece(int x_from, int y_from, int x_to, int y_to);
