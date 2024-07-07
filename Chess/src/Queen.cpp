@@ -20,42 +20,19 @@ vector<pair<int, int>> Queen::getPotentialRoadblocks(int x, int y) const {
     vector<pair<int, int>> result;
     int x1 = getX();
     int y1 = getY();
-    if (x1 == x) {
-        if (y1 < y) {
-            for (int i = y1 + 1; i < y; i++) {
-                result.emplace_back(x, i);
-            }
-        } else {
-            for (int i = y1 - 1; i > y; i--) {
-                result.emplace_back(x, i);
-            }
-        }
-    } else if (y1 == y) {
-        if (x1 < x) {
-            for (int i = x1 + 1; i < x; i++) {
-                result.emplace_back(i, y);
-            }
-        } else {
-            for (int i = x1 - 1; i > x; i--) {
-                result.emplace_back(i, y);
-            }
-        }
-    } else if (x1 < x && y1 < y) {
-        for (int i = 1; i < abs(x - x1); i++) {
-            result.emplace_back(x1 + i, y1 + i);
-        }
-    } else if (x1 < x && y1 > y) {
-        for (int i = 1; i < abs(x - x1); i++) {
-            result.emplace_back(x1 + i, y1 - i);
-        }
-    } else if (x1 > x && y1 < y) {
-        for (int i = 1; i < abs(x - x1); i++) {
-            result.emplace_back(x1 - i, y1 + i);
-        }
-    } else if (x1 > x && y1 > y) {
-        for (int i = 1; i < abs(x - x1); i++) {
-            result.emplace_back(x1 - i, y1 - i);
-        }
+
+    //Choose direction to move
+    int dirX = (x > x1) ? 1 : (x < x1) ? -1 : 0;
+    int dirY = (y > y1) ? 1 : (y < y1) ? -1 : 0;
+    //Current position of the cursor
+    int curX = x1 + dirX;
+    int curY = y1 + dirY;
+
+    while (curX != x || curY != y) {
+        result.emplace_back(curX, curY);
+        curX += dirX;
+        curY += dirY;
     }
+
     return result;
 }
