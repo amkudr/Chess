@@ -105,15 +105,29 @@ int Engine::checkMove(string move) {
     if (!piece->isPossibleMove(nextX, nextY)) {
         return 21;
     }
+    if (piece->getSymbol() == 'P' || piece->getSymbol() == 'p') {
+        // Check pawn's movement
+        if (nextY != curY) {
+            // Pawn moves diagonally
+            if (m_board[nextX][nextY] == nullptr) {
+                // If the pawn moves diagonally but there's no piece to capture
+                return 21;
+            }
+        } else {
+            // Pawn moves straight
+            if (m_board[nextX][nextY] != nullptr) {
+                // If the pawn moves straight but there's a piece in the destination
+                return 21;
+            }
+        }
+    }
+
     vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
     for (auto &p: way) {
         if (m_board[p.first][p.second] != nullptr) {
             return 21; //illegal movement
         }
-        //If the pawn is moving diagonally and there is no piece in the destination
-        if ((piece->getSymbol() == 'P' || piece->getSymbol() == 'p') && nextY != curY && m_board[nextX][nextY] == nullptr) {
-            return 21;
-        }
+
     }
     //Make the move
     movePiece(curX, curY, nextX, nextY);
