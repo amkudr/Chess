@@ -1,5 +1,6 @@
 
 #include <sstream>
+#include <iostream>
 #include "Engine.h"
 #include "Queen.h"
 #include "Bishop.h"
@@ -84,12 +85,12 @@ int Engine::checkMove(string move) {
      * @param move - string with the move
      * @return code response
      */
-     
+
     int curX = move[0] - 'a';
     int curY = move[1] - '1';
     int nextX = move[2] - 'a';
     int nextY = move[3] - '1';
-    
+
     shared_ptr<Piece> piece = m_board[curX][curY];
     if (piece == nullptr) {
         return 11;
@@ -110,7 +111,7 @@ int Engine::checkMove(string move) {
             return 21; //illegal movement
         }
         //If the pawn is moving diagonally and there is no piece in the destination
-        if (piece->getSymbol() == ('P'| 'p') && nextY != curY && m_board[nextX][nextY] == nullptr) {
+        if ((piece->getSymbol() == 'P' || piece->getSymbol() == 'p') && nextY != curY && m_board[nextX][nextY] == nullptr) {
             return 21;
         }
     }
@@ -120,14 +121,41 @@ int Engine::checkMove(string move) {
     if (isCheck(false)) {
         //if check undo
         movePiece(nextX, nextY, curX, curY);
+
         return 31;
     }
     //Check if the move will cause check
     bool causeCheck = isCheck(true);
-
+    if (causeCheck) {
+        white_turn = !white_turn;
+        for (int xi = 0; xi < SIZE_B; xi++)
+        {
+            for (int yi = 0; yi < SIZE_B; yi++)
+            {
+                if (m_board[xi][yi] != nullptr && m_board[xi][yi]->isWhite() == white_turn)
+                {
+                    for (int xj = 0; xj < SIZE_B; xj++)
+                    {
+                        for (int yj = 0; yj < SIZE_B; yj++)
+                        {
+                            string moveCheck = string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
+                            int res = checkMove(moveCheck);
+                            if (res == 42 || res == 41) {
+                                movePiece(xj, yj, xi, yi); //undo the move
+                                white_turn = !white_turn;
+                                std::cout<< "All good "<< moveCheck <<endl;
+                                return 41;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        white_turn = !white_turn;
+        return 43;
+    }
     white_turn = !white_turn;
-    return causeCheck ? 41 : 42;
-
+    return 42;
 }
 
 bool Engine::isCheck(bool goodCheck) {
