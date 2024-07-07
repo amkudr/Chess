@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include "Queen.h"
 #include "Bishop.h"
+#include "Pawn.h"
+#include "Knight.h"
 
 Engine::Engine(const string &start) {
     int index = 0;
@@ -18,9 +20,6 @@ Engine::Engine(const string &start) {
                     break;
                 case '#':
                     m_board[col][row] = nullptr;
-                    break;
-                case 'p':
-                    m_board[col][row] = make_shared<Piece>(col, row, false);
                     break;
                 case 'K':
                     m_board[col][row] = make_shared<King>(col, row, true);
@@ -41,6 +40,18 @@ Engine::Engine(const string &start) {
                     break;
                 case 'b':
                     m_board[col][row] = make_shared<Bishop>(col, row, false);
+                    break;
+                case 'P':
+                    m_board[col][row] = make_shared<Pawn>(col, row, true);
+                    break;
+                case 'p':
+                    m_board[col][row] = make_shared<Pawn>(col, row, false);
+                    break;
+                case 'N':
+                    m_board[col][row] = make_shared<Knight>(col, row, true);
+                    break;
+                case 'n':
+                    m_board[col][row] = make_shared<Knight>(col, row, false);
                     break;
 
                 default:
@@ -73,32 +84,42 @@ int Engine::checkMove(string move) {
      * @param move - string with the move
      * @return code response
      */
-    shared_ptr<Piece> piece = m_board[move[0] - 'a'][move[1] - '1'];
+     
+    int curX = move[0] - 'a';
+    int curY = move[1] - '1';
+    int nextX = move[2] - 'a';
+    int nextY = move[3] - '1';
+    
+    shared_ptr<Piece> piece = m_board[curX][curY];
     if (piece == nullptr) {
         return 11;
     }
     if (piece->isWhite() != white_turn) {
         return 12;
     }
-    if (m_board[move[2] - 'a'][move[3] - '1'] != nullptr &&
-        m_board[move[2] - 'a'][move[3] - '1']->isWhite() == white_turn) {
+    if (m_board[nextX][nextY] != nullptr &&
+        m_board[nextX][nextY]->isWhite() == white_turn) {
         return 13;
     }
-    if (!piece->isPossibleMove(move[2] - 'a', move[3] - '1')) {
+    if (!piece->isPossibleMove(nextX, nextY)) {
         return 21;
     }
-    vector<pair<int, int>> way = piece->getPotentialRoadblocks(move[2] - 'a', move[3] - '1');
+    vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
     for (auto &p: way) {
         if (m_board[p.first][p.second] != nullptr) {
             return 21; //illegal movement
         }
+        //If the pawn is moving diagonally and there is no piece in the destination
+        if (piece->getSymbol() == ('P'| 'p') && nextY != curY && m_board[nextX][nextY] == nullptr) {
+            return 21;
+        }
     }
     //Make the move
-    movePiece(move[0] - 'a', move[1] - '1', move[2] - 'a', move[3] - '1');
+    movePiece(curX, curY, nextX, nextY);
 
     if (isCheck(false)) {
         //if check undo
-        movePiece(move[2] - 'a', move[3] - '1', move[0] - 'a', move[1] - '1');
+        movePiece(nextX, nextY, curX, curY);
         return 31;
     }
     //Check if the move will cause check
@@ -160,4 +181,7 @@ void Engine::movePiece(int x_from, int y_from, int x_to, int y_to) {
     m_board[x_from][y_from] = nullptr;
     piece->setX(x_to);
     piece->setY(y_to);
+    if (piece->getSymbol() == ('P'|'p')) { //If the piece is a pawn
+        dynamic_pointer_cast<Pawn>(piece)->setFirstMove(false);
+    }
 }
