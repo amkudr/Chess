@@ -6,11 +6,7 @@ Rook::Rook(int x, int y, bool isWhite) : Piece(x, y, isWhite) {
 }
 
 char Rook::getSymbol() const {
-    if (isWhite()) {
-        return 'R';
-    } else {
-        return 'r';
-    }
+    return isWhite() ? 'R' : 'r';
 }
 
 bool Rook::isPossibleMove(int x, int y) const {
