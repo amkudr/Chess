@@ -86,6 +86,7 @@ int Engine::checkMove(string move) {
      * @return code response
      */
 
+
     int curX = move[0] - 'a';
     int curY = move[1] - '1';
     int nextX = move[2] - 'a';
@@ -141,32 +142,11 @@ int Engine::checkMove(string move) {
     //Check if the move will cause check
     bool causeCheck = isCheck(true);
     if (causeCheck) {
-        white_turn = !white_turn;
-        for (int xi = 0; xi < SIZE_B; xi++)
-        {
-            for (int yi = 0; yi < SIZE_B; yi++)
-            {
-                if (m_board[xi][yi] != nullptr && m_board[xi][yi]->isWhite() == white_turn)
-                {
-                    for (int xj = 0; xj < SIZE_B; xj++)
-                    {
-                        for (int yj = 0; yj < SIZE_B; yj++)
-                        {
-                            string moveCheck = string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
-                            int res = checkMove(moveCheck);
-                            if (res == 42 || res == 41) {
-                                movePiece(xj, yj, xi, yi); //undo the move
-                                white_turn = !white_turn;
-                                std::cout<< "All good "<< moveCheck <<endl;
-                                return 41;
-                            }
-                        }
-                    }
-                }
-            }
+        if (isCheckmate()) {
+            return 43;
         }
-        white_turn = !white_turn;
-        return 43;
+        else return 41;
+
     }
     white_turn = !white_turn;
     return 42;
@@ -181,16 +161,16 @@ bool Engine::isCheck(bool goodCheck) {
     shared_ptr<King> king;
     bool enemyColor = !white_turn;
     if (goodCheck) {
-        king = white_turn ? black_king:white_king;
+        king = white_turn ? black_king : white_king;
         enemyColor = white_turn;
-    }
-    else king = white_turn ? white_king : black_king;
-    if (king != nullptr){
-        for (auto & i : m_board) {
-            for (const auto & j : i) {
+    } else king = white_turn ? white_king : black_king;
+    if (king != nullptr) {
+        for (auto &i: m_board) {
+            for (const auto &j: i) {
                 if (j != nullptr && j->isWhite() == enemyColor) { //Check all enemy pieces
                     if (j->isPossibleMove(king->getX(), king->getY())) { //If enemy piece can attack king
-                        vector<pair<int, int>> way = j->getPotentialRoadblocks(king->getX(), king->getY()); //check if there is a flap fot the king
+                        vector<pair<int, int>> way = j->getPotentialRoadblocks(king->getX(),
+                                                                               king->getY()); //check if there is a flap fot the king
                         bool isCheck = true;
                         for (auto &p: way) {
                             if (m_board[p.first][p.second] != nullptr) {
@@ -223,7 +203,36 @@ void Engine::movePiece(int x_from, int y_from, int x_to, int y_to) {
     m_board[x_from][y_from] = nullptr;
     piece->setX(x_to);
     piece->setY(y_to);
-    if (piece->getSymbol() == ('P'|'p')) { //If the piece is a pawn
+    if (piece->getSymbol() == ('P' | 'p')) { //If the piece is a pawn
         dynamic_pointer_cast<Pawn>(piece)->setFirstMove(false);
     }
+}
+
+bool Engine::isCheckmate() {
+    /**
+     * Check if the king is in checkmate
+     * @return true if the king is in checkmate
+     */
+    white_turn = !white_turn;
+    for (int xi = 0; xi < SIZE_B; xi++) {
+        for (int yi = 0; yi < SIZE_B; yi++) {
+            if (m_board[xi][yi] != nullptr && m_board[xi][yi]->isWhite() == white_turn) {
+                for (int xj = 0; xj < SIZE_B; xj++) {
+                    for (int yj = 0; yj < SIZE_B; yj++) {
+                        string moveCheck =
+                                string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
+                        int res = checkMove(moveCheck);
+                        if (res == 42 || res == 41) {
+                            movePiece(xj, yj, xi, yi); //undo the move
+                            white_turn = !white_turn;
+                            std::cout << "All good " << moveCheck << endl;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    white_turn = !white_turn;
+    return true;
 }
