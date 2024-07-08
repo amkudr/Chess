@@ -14,6 +14,8 @@ class Engine {
     shared_ptr<King> white_king;
     shared_ptr<King> black_king;
     bool isCheck(bool goodCheck);
+    bool isCheckmate();
+
 
 
 

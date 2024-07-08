@@ -29,7 +29,9 @@ class Chess {
 	bool isValid() const;
 	bool isExit() const;
 	void excute();
+    void excuteCastling();
 	void doTurn();
+
 
 public:
 	Chess(const string& start = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr");

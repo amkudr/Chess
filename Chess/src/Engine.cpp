@@ -1,4 +1,3 @@
-
 #include <sstream>
 #include <iostream>
 #include "Engine.h"
@@ -123,33 +122,79 @@ int Engine::checkMove(string move) {
         }
     }
 
-    vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
-    for (auto &p: way) {
-        if (m_board[p.first][p.second] != nullptr) {
-            return 21; //illegal movement
+    bool isCastling = false;
+    if ((piece->getSymbol() == 'K' && curY == 4 && curX == 0 &&
+         ((nextY == 6 && nextX == 0 &&
+           m_board[0][5] == nullptr && m_board[0][6] == nullptr &&
+           m_board[0][7] != nullptr && m_board[0][7]->getSymbol() == 'R' &&
+           !m_board[0][7]->isMoved() && !piece->isMoved()) ||
+          (nextY == 1 && nextX == 0 &&
+           m_board[0][1] == nullptr && m_board[0][2] == nullptr && m_board[0][3] == nullptr &&
+           m_board[0][0] != nullptr && m_board[0][0]->getSymbol() == 'R' &&
+           !m_board[0][0]->isMoved() && !piece->isMoved()))) ||
+        (piece->getSymbol() == 'k' && curY == 4 && curX == 7 &&
+         ((nextY == 6 && nextX == 7 &&
+           m_board[7][5] == nullptr && m_board[7][6] == nullptr &&
+           m_board[7][7] != nullptr && m_board[7][7]->getSymbol() == 'r' &&
+           !m_board[7][7]->isMoved() && !piece->isMoved()) ||
+          (nextY == 1 && nextX == 7 &&
+           m_board[7][1] == nullptr && m_board[7][2] == nullptr && m_board[7][3] == nullptr &&
+           m_board[7][0] != nullptr && m_board[7][0]->getSymbol() == 'r' &&
+           !m_board[7][0]->isMoved() && !piece->isMoved())))) {
+        isCastling = true;
+        movePiece(curX, curY, nextX, nextY);
+        if (nextY == 6 && nextX == 0) {
+            movePiece(0, 7, 0, 5); // White short castling
+        } else if (nextY == 1 && nextX == 0) {
+            movePiece(0, 0, 0, 3); // White long castling
+        } else if (nextY == 6 && nextX == 7) {
+            movePiece(7, 7, 7, 5); // Black short castling
+        } else if (nextY == 1 && nextX == 7) {
+            movePiece(7, 0, 7, 3); // Black long castling
         }
-
+    } else if (piece->getSymbol() == 'k' | piece->getSymbol() == 'K') {
+        return 21; //Castling is not possible
+    } else {
+        vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
+        for (auto &p: way) {
+            if (m_board[p.first][p.second] != nullptr) {
+                return 21; //illegal movement
+            }
+        }
+        // Make the move
+        movePiece(curX, curY, nextX, nextY);
     }
-    //Make the move
-    movePiece(curX, curY, nextX, nextY);
 
     if (isCheck(false)) {
-        //if check undo
+        // if check, undo the move and castling if applicable
         movePiece(nextX, nextY, curX, curY);
-
+        if (isCastling) {
+            if (nextY == 6 && nextX == 0) {
+                movePiece(0, 5, 0, 7); // Undo white short castling
+            } else if (nextY == 2 && nextX == 0) {
+                movePiece(0, 3, 0, 0); // Undo white long castling
+            } else if (nextY == 6 && nextX == 7) {
+                movePiece(7, 5, 7, 7); // Undo black short castling
+            } else if (nextY == 2 && nextX == 7) {
+                movePiece(7, 3, 7, 0); // Undo black long castling
+            }
+        }
         return 31;
     }
-    //Check if the move will cause check
+
+    // Check if the move causes check
     bool causeCheck = isCheck(true);
     if (causeCheck) {
         if (isCheckmate()) {
-            return 43;
+            return 44; // Checkmate
+        } else {
+            return 41; // Check
         }
-        else return 41;
-
     }
+
     white_turn = !white_turn;
-    return 42;
+
+    return isCastling ? 43 : 42; // Castling or regular move
 }
 
 bool Engine::isCheck(bool goodCheck) {
@@ -163,14 +208,15 @@ bool Engine::isCheck(bool goodCheck) {
     if (goodCheck) {
         king = white_turn ? black_king : white_king;
         enemyColor = white_turn;
-    } else king = white_turn ? white_king : black_king;
+    } else {
+        king = white_turn ? white_king : black_king;
+    }
     if (king != nullptr) {
-        for (auto &i: m_board) {
-            for (const auto &j: i) {
-                if (j != nullptr && j->isWhite() == enemyColor) { //Check all enemy pieces
-                    if (j->isPossibleMove(king->getX(), king->getY())) { //If enemy piece can attack king
-                        vector<pair<int, int>> way = j->getPotentialRoadblocks(king->getX(),
-                                                                               king->getY()); //check if there is a flap fot the king
+        for (auto &col: m_board) {
+            for (auto &piece: col) {
+                if (piece != nullptr && piece->isWhite() == enemyColor) {
+                    if (piece->isPossibleMove(king->getX(), king->getY())) {
+                        vector<pair<int, int>> way = piece->getPotentialRoadblocks(king->getX(), king->getY());
                         bool isCheck = true;
                         for (auto &p: way) {
                             if (m_board[p.first][p.second] != nullptr) {
@@ -203,7 +249,7 @@ void Engine::movePiece(int x_from, int y_from, int x_to, int y_to) {
     m_board[x_from][y_from] = nullptr;
     piece->setX(x_to);
     piece->setY(y_to);
-    if (piece->getSymbol() == ('P' | 'p')) { //If the piece is a pawn
+    if (piece->getSymbol() == 'P' || piece->getSymbol() == 'p') {
         dynamic_pointer_cast<Pawn>(piece)->setFirstMove(false);
     }
 }
@@ -223,9 +269,8 @@ bool Engine::isCheckmate() {
                                 string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
                         int res = checkMove(moveCheck);
                         if (res == 42 || res == 41) {
-                            movePiece(xj, yj, xi, yi); //undo the move
+                            movePiece(xj, yj, xi, yi); // Undo the move
                             white_turn = !white_turn;
-                            std::cout << "All good " << moveCheck << endl;
                             return false;
                         }
                     }
