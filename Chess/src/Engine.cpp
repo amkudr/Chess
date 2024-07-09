@@ -124,8 +124,8 @@ int Engine::checkMove(string move, bool checkmateV) {
     }
     bool isCastling = Castling(curX, curY, nextX, nextY, piece);
     if(!isCastling) {
-        if ((piece->getSymbol() == 'k' | piece->getSymbol() == 'K') && (abs(nextY - curY) > 1) ||
-            abs(nextX - curX) > 1) {
+        if ((piece->getSymbol() == 'k' | piece->getSymbol() == 'K') && ((abs(nextY - curY) > 1) ||
+            abs(nextX - curX) > 1)) {
             return 21; //Castling is not possible
         } else {
             vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);

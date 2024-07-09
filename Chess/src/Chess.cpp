@@ -197,7 +197,9 @@ void Chess::doTurn() {
         }
         case 44: {
             excute();
-            m_msg = "the last movement was legal and cause checkmate \n";
+            m_msg = "The last movement was legal and caused checkmate.\n"
+                    "Player " + std::string(m_turn ? "White" : "Black") + " wins!!\n";
+
             break;
         }
 
@@ -224,7 +226,7 @@ string Chess::getInput() {
     showAskInput();
 
     cin >> m_input;
-    if (isExit())
+    if (isExit() || m_codeResponse == 44)
         return "exit";
     while (!isValid() || isSame()) {
         if (!isValid())
@@ -258,16 +260,13 @@ void Chess::setCodeResponse(int codeResponse) {
 
 void Chess::excuteCastling() {
     excute();
-    if(m_input == "a5a7") {
+    if (m_input == "a5a7") {
         m_input = "a8a6";
-    }
-    else if (m_input == "a5a2"){
+    } else if (m_input == "a5a2") {
         m_input = "a1a3";
-    }
-    else if (m_input == "h5h7"){
+    } else if (m_input == "h5h7") {
         m_input = "h8h6";
-    }
-    else if (m_input == "h5h2"){
+    } else if (m_input == "h5h2") {
         m_input = "h1h3";
     }
     excute();
