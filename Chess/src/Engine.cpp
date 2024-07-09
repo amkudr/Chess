@@ -122,49 +122,21 @@ int Engine::checkMove(string move, bool checkmateV) {
             }
         }
     }
-
-    bool isCastling = false;
-    if ((piece->getSymbol() == 'K' && curY == 4 && curX == 0 &&
-         ((nextY == 6 && nextX == 0 &&
-           m_board[0][5] == nullptr && m_board[0][6] == nullptr &&
-           m_board[0][7] != nullptr && m_board[0][7]->getSymbol() == 'R' &&
-           !m_board[0][7]->isMoved() && !piece->isMoved()) ||
-          (nextY == 1 && nextX == 0 &&
-           m_board[0][1] == nullptr && m_board[0][2] == nullptr && m_board[0][3] == nullptr &&
-           m_board[0][0] != nullptr && m_board[0][0]->getSymbol() == 'R' &&
-           !m_board[0][0]->isMoved() && !piece->isMoved()))) ||
-        (piece->getSymbol() == 'k' && curY == 4 && curX == 7 &&
-         ((nextY == 6 && nextX == 7 &&
-           m_board[7][5] == nullptr && m_board[7][6] == nullptr &&
-           m_board[7][7] != nullptr && m_board[7][7]->getSymbol() == 'r' &&
-           !m_board[7][7]->isMoved() && !piece->isMoved()) ||
-          (nextY == 1 && nextX == 7 &&
-           m_board[7][1] == nullptr && m_board[7][2] == nullptr && m_board[7][3] == nullptr &&
-           m_board[7][0] != nullptr && m_board[7][0]->getSymbol() == 'r' &&
-           !m_board[7][0]->isMoved() && !piece->isMoved())))) {
-        isCastling = true;
-        movePiece(curX, curY, nextX, nextY);
-
-        if (nextY == 6 && nextX == 0) {
-            movePiece(0, 7, 0, 5); // White short castling
-        } else if (nextY == 1 && nextX == 0) {
-            movePiece(0, 0, 0, 3); // White long castling
-        } else if (nextY == 6 && nextX == 7) {
-            movePiece(7, 7, 7, 5); // Black short castling
-        } else if (nextY == 1 && nextX == 7) {
-            movePiece(7, 0, 7, 3); // Black long castling
-        }
-    } else if ((piece->getSymbol() == 'k' | piece->getSymbol() == 'K') && (abs(nextY - curY) > 1) || abs(nextX - curX) > 1){
-        return 21; //Castling is not possible
-    } else {
-        vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
-        for (auto &p: way) {
-            if (m_board[p.first][p.second] != nullptr) {
-                return 21; //illegal movement
+    bool isCastling = Castling(curX, curY, nextX, nextY, piece);
+    if(!isCastling) {
+        if ((piece->getSymbol() == 'k' | piece->getSymbol() == 'K') && (abs(nextY - curY) > 1) ||
+            abs(nextX - curX) > 1) {
+            return 21; //Castling is not possible
+        } else {
+            vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
+            for (auto &p: way) {
+                if (m_board[p.first][p.second] != nullptr) {
+                    return 21; //illegal movement
+                }
             }
+            // Make the move
+            movePiece(curX, curY, nextX, nextY);
         }
-        // Make the move
-        movePiece(curX, curY, nextX, nextY);
     }
 
     if (isCheck(false)) {
@@ -291,3 +263,49 @@ bool Engine::isCheckmate() {
     white_turn = !white_turn;
     return true;
 }
+
+bool Engine::Castling(int curX, int curY, int nextX, int nextY, const shared_ptr<Piece>& piece) {
+    /**
+     * Check if the move is castling
+     * @param curX - x coordinate of the piece
+     * @param curY - y coordinate of the piece
+     * @param nextX - x coordinate of the destination
+     * @param nextY - y coordinate of the destination
+     * @param piece - the piece
+     * @return true if the move is castling
+     */
+    if ((piece->getSymbol() == 'K' && curY == 4 && curX == 0 &&
+         ((nextY == 6 && nextX == 0 &&
+           m_board[0][5] == nullptr && m_board[0][6] == nullptr &&
+           m_board[0][7] != nullptr && m_board[0][7]->getSymbol() == 'R' &&
+           !m_board[0][7]->isMoved() && !piece->isMoved()) ||
+          (nextY == 1 && nextX == 0 &&
+           m_board[0][1] == nullptr && m_board[0][2] == nullptr && m_board[0][3] == nullptr &&
+           m_board[0][0] != nullptr && m_board[0][0]->getSymbol() == 'R' &&
+           !m_board[0][0]->isMoved() && !piece->isMoved()))) ||
+        (piece->getSymbol() == 'k' && curY == 4 && curX == 7 &&
+         ((nextY == 6 && nextX == 7 &&
+           m_board[7][5] == nullptr && m_board[7][6] == nullptr &&
+           m_board[7][7] != nullptr && m_board[7][7]->getSymbol() == 'r' &&
+           !m_board[7][7]->isMoved() && !piece->isMoved()) ||
+          (nextY == 1 && nextX == 7 &&
+           m_board[7][1] == nullptr && m_board[7][2] == nullptr && m_board[7][3] == nullptr &&
+           m_board[7][0] != nullptr && m_board[7][0]->getSymbol() == 'r' &&
+           !m_board[7][0]->isMoved() && !piece->isMoved())))) {
+        movePiece(curX, curY, nextX, nextY);
+
+        if (nextY == 6 && nextX == 0) {
+            movePiece(0, 7, 0, 5); // White short castling
+        } else if (nextY == 1 && nextX == 0) {
+            movePiece(0, 0, 0, 3); // White long castling
+        } else if (nextY == 6) {
+            movePiece(7, 7, 7, 5); // Black short castling
+        } else  {
+            movePiece(7, 0, 7, 3); // Black long castling
+        }
+        return true;
+
+    }
+    return false;
+}
+

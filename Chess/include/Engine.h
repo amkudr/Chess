@@ -15,6 +15,7 @@ class Engine {
     shared_ptr<King> black_king;
     bool isCheck(bool goodCheck);
     bool isCheckmate();
+    bool Castling(int curX, int curY, int nextX, int nextY, const shared_ptr<Piece>& piece);
 
 
 
