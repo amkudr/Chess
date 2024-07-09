@@ -47,7 +47,7 @@ int main() {
 
         /**/
         { // put your code here instead that code
-            codeResponse = e.checkMove(res);
+            codeResponse = e.checkMove(res, false);
         }
         /**/
 

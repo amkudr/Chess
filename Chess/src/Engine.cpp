@@ -78,10 +78,11 @@ string Engine::printBoard() {
     return os.str();
 }
 
-int Engine::checkMove(string move) {
+int Engine::checkMove(string move, bool checkmateV) {
     /**
      * Check if the move is legal
      * @param move - string with the move
+     * @param checkmateV - if true check if the move called from isCheckmate
      * @return code response
      */
 
@@ -143,6 +144,7 @@ int Engine::checkMove(string move) {
            !m_board[7][0]->isMoved() && !piece->isMoved())))) {
         isCastling = true;
         movePiece(curX, curY, nextX, nextY);
+
         if (nextY == 6 && nextX == 0) {
             movePiece(0, 7, 0, 5); // White short castling
         } else if (nextY == 1 && nextX == 0) {
@@ -152,7 +154,7 @@ int Engine::checkMove(string move) {
         } else if (nextY == 1 && nextX == 7) {
             movePiece(7, 0, 7, 3); // Black long castling
         }
-    } else if (piece->getSymbol() == 'k' | piece->getSymbol() == 'K') {
+    } else if ((piece->getSymbol() == 'k' | piece->getSymbol() == 'K') && (abs(nextY - curY) > 1) || abs(nextX - curX) > 1){
         return 21; //Castling is not possible
     } else {
         vector<pair<int, int>> way = piece->getPotentialRoadblocks(nextX, nextY);
@@ -168,14 +170,19 @@ int Engine::checkMove(string move) {
     if (isCheck(false)) {
         // if check, undo the move and castling if applicable
         movePiece(nextX, nextY, curX, curY);
+        piece->setIsMoved(false);
         if (isCastling) {
             if (nextY == 6 && nextX == 0) {
                 movePiece(0, 5, 0, 7); // Undo white short castling
+                m_board[0][7]->setIsMoved(false);
             } else if (nextY == 2 && nextX == 0) {
                 movePiece(0, 3, 0, 0); // Undo white long castling
+                m_board[0][0]->setIsMoved(false);
             } else if (nextY == 6 && nextX == 7) {
+                m_board[7][7]->setIsMoved(false);
                 movePiece(7, 5, 7, 7); // Undo black short castling
             } else if (nextY == 2 && nextX == 7) {
+                m_board[7][0]->setIsMoved(false);
                 movePiece(7, 3, 7, 0); // Undo black long castling
             }
         }
@@ -185,14 +192,16 @@ int Engine::checkMove(string move) {
     // Check if the move causes check
     bool causeCheck = isCheck(true);
     if (causeCheck) {
-        if (isCheckmate()) {
-            return 44; // Checkmate
+        if (!checkmateV && isCheckmate()) { // Check if the move causes checkmate only if checkmateV is true(not called from isCheckmate)
+            return 44; // checkmateV
         } else {
-            return 41; // Check
+            piece->setIsMoved(true);
+            return isCastling? 43:41; // Check
         }
     }
 
     white_turn = !white_turn;
+    piece->setIsMoved(true);
 
     return isCastling ? 43 : 42; // Castling or regular move
 }
@@ -249,9 +258,8 @@ void Engine::movePiece(int x_from, int y_from, int x_to, int y_to) {
     m_board[x_from][y_from] = nullptr;
     piece->setX(x_to);
     piece->setY(y_to);
-    if (piece->getSymbol() == 'P' || piece->getSymbol() == 'p') {
-        dynamic_pointer_cast<Pawn>(piece)->setFirstMove(false);
-    }
+    piece->setIsMoved(true);
+
 }
 
 bool Engine::isCheckmate() {
@@ -267,9 +275,11 @@ bool Engine::isCheckmate() {
                     for (int yj = 0; yj < SIZE_B; yj++) {
                         string moveCheck =
                                 string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
-                        int res = checkMove(moveCheck);
-                        if (res == 42 || res == 41) {
+                        bool isFirstMove = m_board[xi][yi]->isMoved();
+                        int res = checkMove(moveCheck, true);
+                        if (res == 42 || res == 41 || res == 43) {
                             movePiece(xj, yj, xi, yi); // Undo the move
+                            m_board[xi][yi]->setIsMoved(isFirstMove);
                             white_turn = !white_turn;
                             return false;
                         }

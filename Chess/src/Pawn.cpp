@@ -4,16 +4,13 @@ char Pawn::getSymbol() const {
     return isWhite() ? 'P' : 'p';
 }
 
-bool Pawn::isFirstMove() const {
-    return isFM;
-}
 
 bool Pawn::isPossibleMove(int x, int y) const {
     int x1 = getX();
     int y1 = getY();
     int direction = isWhite() ? 1 : -1;
 
-    if (y == y1 && x == x1 + 2 * direction && isFirstMove()) {  //First move
+    if (y == y1 && x == x1 + 2 * direction && isMoved()) {  //First move
         return true;
     }
     if (x == x1 + direction && (y == y1 || y == y1 + 1 || y == y1 - 1)) {
@@ -28,12 +25,12 @@ vector<pair<int, int>> Pawn::getPotentialRoadblocks(int x, int y) const {
     }
     vector<pair<int, int>> way;
     int x1 = getX();
-    int y1 = getY();
     int direction = isWhite() ? 1 : -1;
 
-    if (isFirstMove() && x == x1 + 2 * direction) {
+    if (isMoved() && x == x1 + 2 * direction) {
         way.emplace_back(x1 + direction, y);
     }
 
     return way;
 }
+

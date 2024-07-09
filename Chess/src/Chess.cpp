@@ -195,6 +195,11 @@ void Chess::doTurn() {
             m_msg = "the last movement was legal - Castling\n";
             break;
         }
+        case 44: {
+            excute();
+            m_msg = "the last movement was legal and cause checkmate \n";
+            break;
+        }
 
     }
 }

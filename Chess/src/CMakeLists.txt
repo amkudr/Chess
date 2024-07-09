@@ -8,5 +8,4 @@
         "Queen.cpp"
         "Knight.cpp"
         "Pawn.cpp"
-        "test2.cpp"
 )

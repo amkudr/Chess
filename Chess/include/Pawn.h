@@ -5,23 +5,14 @@
 
 class Pawn : public Piece {
 public:
-    Pawn(int x, int y, bool isWhite) : Piece(x, y, isWhite){
-        isFM = true;
-    }
+    Pawn(int x, int y, bool isWhite) : Piece(x, y, isWhite){};
 
     char getSymbol() const override;
 
     bool isPossibleMove(int x, int y) const override;
 
-    bool isFirstMove() const;
-
-    void setFirstMove(bool isFM_){
-        this->isFM = isFM_;
-    }
-
     vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const override;
 private:
-    bool isFM;
 };
 
 #endif //CHESS_PAWN_H
