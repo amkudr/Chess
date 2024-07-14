@@ -31,6 +31,8 @@ public:
 
     virtual bool isPossibleMove(int x_, int y_) const;
 
+    virtual int getValue() const;
+
     virtual vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const;
 
 //    ~Piece();

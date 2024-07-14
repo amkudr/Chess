@@ -34,3 +34,7 @@ vector<pair<int, int>> Pawn::getPotentialRoadblocks(int x, int y) const {
     return way;
 }
 
+int Pawn::getValue() const {
+    return 1;
+}
+

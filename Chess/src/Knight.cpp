@@ -21,3 +21,7 @@ bool Knight::isPossibleMove(int x, int y) const {
 vector<pair<int, int>> Knight::getPotentialRoadblocks(int x, int y) const {
     return {};
 }
+
+int Knight::getValue() const {
+    return 3;
+}

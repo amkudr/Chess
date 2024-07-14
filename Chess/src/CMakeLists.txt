@@ -8,4 +8,6 @@
         "Queen.cpp"
         "Knight.cpp"
         "Pawn.cpp"
+        "PriorityQueue.cpp"
+        "Move.cpp"
 )

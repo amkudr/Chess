@@ -51,7 +51,6 @@ Engine::Engine(const string &start) {
         }
     }
 
-
 }
 
 string Engine::printBoard() {
@@ -141,14 +140,15 @@ int Engine::checkMove(string move, bool checkmateV) {
     if (causeCheck) {
         if (!checkmateV &&
             isCheckmate()) { // Check if the move causes checkmate only if checkmateV is true(not called from isCheckmate)
+            white_turn = !white_turn;
             return 44; // checkmateV
         } else {
+            white_turn = !white_turn;
             return isCastling ? 43 : 41; // Check
         }
     }
 
     white_turn = !white_turn;
-
     return isCastling ? 43 : 42; // Castling or regular move
 }
 
@@ -230,7 +230,6 @@ bool Engine::isCheckmate() {
                         int res = checkMove(moveCheck, true);
                         if (res == 42 || res == 41 || res == 43) {
                             undoMove();
-                            white_turn = !white_turn;
                             return false;
                         }
                     }
@@ -307,4 +306,102 @@ void Engine::undoMove() {
         move_history.pop_back();
     }
 
+}
+
+void Engine::valueMove() {
+    /**
+     * Check the value of the move
+     */
+    priorityQueue->clear();
+    for (int xi = 0; xi < SIZE_B; xi++) {
+        for (int yi = 0; yi < SIZE_B; yi++) {
+            if (m_board[xi][yi] != nullptr && m_board[xi][yi]->isWhite() == white_turn) {
+                for (int xj = 0; xj < SIZE_B; xj++) {
+                    for (int yj = 0; yj < SIZE_B; yj++) {
+                        int value = 0;
+                        string moveCheck =
+                                string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
+                        bool thirdOption = false;
+                        if (m_board[xj][yj] != nullptr && m_board[xj][yj]->isWhite() != white_turn) {
+                            thirdOption = true;
+                        }
+                        int res = checkMove(moveCheck, false);
+
+                        if (res == 42 || res == 41 || res == 43 || res == 44) {
+                            white_turn = !white_turn;
+
+                            value += firstOption(xj, yj);
+                            value += secondOption(xj, yj);
+                            if (thirdOption) {
+                                value += 1; //Add 2 if the piece can capture the enemy piece
+                            }
+                            undoMove();
+                            priorityQueue->push(make_shared<Move>(moveCheck, value));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+int Engine::firstOption(int x, int y) {
+    /**
+     * Check if the piece can capture by the more weakest enemy piece
+     */
+
+    bool enemyColor = !white_turn;
+    for (int xi = 0; xi < SIZE_B; xi++) {
+        for (int yi = 0; yi < SIZE_B; yi++) {
+            if (m_board[xi][yi] != nullptr && m_board[xi][yi]->isWhite() == enemyColor
+                && m_board[xi][yi]->isPossibleMove(x, y) && m_board[xi][yi]->getValue() < m_board[x][y]->getValue()) {
+                string moveCheck =
+                        string(1, xi + 'a') + to_string(yi + 1) + string(1, x + 'a') + to_string(y + 1);
+                int res = checkMove(moveCheck, false);
+                if (res == 42 || res == 41 || res == 43 || res == 44) {
+                    white_turn = !white_turn;
+                    undoMove();
+                    return -1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int Engine::secondOption(int x, int y) {
+    /**
+     * Check if more strongest enemy piece can be captured
+     */
+    bool enemyColor = !white_turn;
+    for (int xi = 0; xi < SIZE_B; xi++) {
+        for (int yi = 0; yi < SIZE_B; yi++) {
+            if (m_board[xi][yi] != nullptr && m_board[xi][yi]->isWhite() == enemyColor
+                && m_board[x][y]->isPossibleMove(xi, yi) && m_board[x][y]->getValue() > m_board[xi][yi]->getValue()) {
+                string moveCheck =
+                        string(1, x + 'a') + to_string(y + 1) + string(1, xi + 'a') + to_string(yi + 1);
+                int res = checkMove(moveCheck, false);
+                if (res == 42 || res == 41 || res == 43 || res == 44) {
+                    white_turn =! white_turn;
+                    undoMove();
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+string Engine::getBestMove() {
+    /**
+     * Get the best move
+     * @return the best move
+     */
+
+    valueMove();
+    if (priorityQueue->getSize() != 0) {
+        string best = priorityQueue->poll()->getMove();
+        return best;
+    }
+    return "";
 }

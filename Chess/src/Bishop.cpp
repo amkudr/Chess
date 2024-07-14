@@ -36,3 +36,7 @@ vector<pair<int, int>> Bishop::getPotentialRoadblocks(int x, int y) const {
     return result;
 
 }
+
+int Bishop::getValue() const {
+    return 3;
+}

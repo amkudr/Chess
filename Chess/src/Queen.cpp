@@ -36,3 +36,7 @@ vector<pair<int, int>> Queen::getPotentialRoadblocks(int x, int y) const {
 
     return result;
 }
+
+int Queen::getValue() const {
+    return 9;
+}

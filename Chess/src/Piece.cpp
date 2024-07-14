@@ -52,3 +52,7 @@ bool Piece::isMoved() const {
 void Piece::setIsMoved(bool isMoved) {
     isMoved_ = isMoved;
 }
+
+int Piece::getValue() const {
+    return 0;
+}

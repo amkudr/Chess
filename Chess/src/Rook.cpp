@@ -43,4 +43,8 @@ vector<pair<int, int>> Rook::getPotentialRoadblocks(int x, int y) const {
     return way;
 }
 
+int Rook::getValue() const {
+    return 5;
+}
+
 

@@ -13,3 +13,7 @@ bool King::isPossibleMove(int x_, int y_) const {
 vector<pair<int, int>> King::getPotentialRoadblocks(int x, int y) const {
     return {};
 }
+
+int King::getValue() const {
+    return INT_MAX;
+}
