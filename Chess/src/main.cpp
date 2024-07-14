@@ -7,12 +7,20 @@
 
 
 int main() {
-//    string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
+    string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
 //    string board = "RNBQKBNR################################################rnbqkbnr";
-    string board = "####K#########R####################Q##bk############r###########";
+//    string board = "##############R####################Q##bk############r###########";
 //    string board = "####K#########R#####################Q#bk############r###########";
 //	string board = "##########K#############################################r#r#####";
-    Engine e(board);
+    Engine* e = nullptr;
+
+
+    try {
+        e = new Engine(board);
+    } catch (invalid_argument &e) {
+        cerr << e.what() << endl;
+        return 1;
+    }
     Chess a(board);
 
 //    int codeResponse;
@@ -34,9 +42,9 @@ int main() {
 //    }
 
     int codeResponse;
-    string res = a.getInput(e.getBestMove());
-    Sleep(1000);
-
+    string res = a.getInput(e->getBestMove());
+//    Sleep(1000);
+//
 //    string res = a.getInput("");
     while (res != "exit") {
         /*
@@ -57,17 +65,19 @@ int main() {
 
         /**/
         { // put your code here instead that code
-            codeResponse = e.checkMove(res, false);
+            codeResponse = e->checkMove(res, false);
         }
         /**/
 
         a.setCodeResponse(codeResponse);
-        res = a.getInput(e.getBestMove());
-        Sleep(1000);
+        res = a.getInput(e->getBestMove());
+//        Sleep(1000);
 //        res = a.getInput("");
     }
 
     cout << endl << "Exiting " << endl;
+    delete e;
+
     return 0;
 }
 

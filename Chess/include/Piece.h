@@ -23,7 +23,7 @@ public:
 
     void setY(int y);
 
-    bool isMoved() const;
+    bool isFirstMove() const;
 
     void setIsMoved(bool isMoved);
 

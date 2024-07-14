@@ -45,7 +45,7 @@ vector<pair<int, int>> Piece::getPotentialRoadblocks(int x, int y) const {
     return {};
 }
 
-bool Piece::isMoved() const {
+bool Piece::isFirstMove() const {
     return isMoved_;
 }
 

@@ -47,9 +47,9 @@ void PriorityQueue<T>::push(shared_ptr<T> item) {
         it++;
     }
     list.insert(it, item);
-//    if (list.size() > 5) {
-//        list.pop_back();
-//    }
+    if (list.size() > 5) {
+        list.pop_back();
+    }
 }
 template<typename T>
 int PriorityQueue<T>::getSize() const {

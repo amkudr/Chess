@@ -40,29 +40,32 @@ class Engine {
 
 
     bool isCheck(bool goodCheck);
+
     bool isCheckmate();
-    bool Castling(int curX, int curY, int nextX, int nextY, const shared_ptr<Piece>& piece);
+
+    bool Castling(int curX, int curY, int nextX, int nextY, const shared_ptr<Piece> &piece);
+
     void undoMove();
+
     int firstOption(int x, int y);
+
     int secondOption(int x, int y);
+
     void valueMove();
-
-
-
 
 
 public:
     explicit Engine(const string &start = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr");
+
     int checkMove(string move, bool checkmateV);
+
     Engine &operator=(const Engine &) = delete;
+
     string printBoard();
+
     void movePiece(int x_from, int y_from, int x_to, int y_to, bool castlingRook);
+
     string getBestMove();
 
-
-
-
-//    ~Engine();
-//    void run();
 
 };

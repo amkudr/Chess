@@ -10,7 +10,7 @@ bool Pawn::isPossibleMove(int x, int y) const {
     int y1 = getY();
     int direction = isWhite() ? -1 : 1;
 
-    if (y == y1 && x1 == x + 2 * direction && !isMoved()) {  //First move
+    if (y == y1 && x1 == x + 2 * direction && isFirstMove()) {  //First move
         return true;
     }
     if (x1 == x + direction && (y == y1 || y == y1 + 1 || y == y1 - 1)) {
@@ -27,7 +27,7 @@ vector<pair<int, int>> Pawn::getPotentialRoadblocks(int x, int y) const {
     int x1 = getX();
     int direction = isWhite() ? 1 : -1;
 
-    if (isMoved() && x == x1 + 2 * direction) {
+    if (isFirstMove() && x == x1 + 2 * direction) {
         way.emplace_back(x1 + direction, y);
     }
 

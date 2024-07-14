@@ -50,6 +50,9 @@ Engine::Engine(const string &start) {
             }
         }
     }
+    if (white_king == nullptr || black_king == nullptr) {
+        throw invalid_argument("No king found");
+    }
 
 }
 
@@ -206,11 +209,11 @@ void Engine::movePiece(int x_from, int y_from, int x_to, int y_to, bool castling
     shared_ptr<Piece> piece = m_board[x_from][y_from];
     m_board[x_to][y_to] = piece;
     m_board[x_from][y_from] = nullptr;
-    m_firstMove[x_to][y_to] = true;
+    m_firstMove[x_to][y_to] = false;
     m_firstMove[x_from][y_from] = false;
     piece->setX(x_to);
     piece->setY(y_to);
-    piece->setIsMoved(true);
+    piece->setIsMoved(false);
 
 }
 
@@ -255,20 +258,20 @@ bool Engine::Castling(int curX, int curY, int nextX, int nextY, const shared_ptr
          ((nextY == 6 && nextX == 0 &&
            m_board[0][5] == nullptr && m_board[0][6] == nullptr &&
            m_board[0][7] != nullptr && m_board[0][7]->getSymbol() == 'R' &&
-           !m_firstMove[0][7] && !m_firstMove[curX][curY]) ||
+           m_firstMove[0][7] && m_firstMove[curX][curY]) ||
           (nextY == 1 && nextX == 0 &&
            m_board[0][1] == nullptr && m_board[0][2] == nullptr && m_board[0][3] == nullptr &&
            m_board[0][0] != nullptr && m_board[0][0]->getSymbol() == 'R' &&
-           !m_firstMove[0][0] && !m_firstMove[curX][curY]))) ||
+           m_firstMove[0][0] && m_firstMove[curX][curY]))) ||
         (piece->getSymbol() == 'k' && curY == 4 && curX == 7 &&
          ((nextY == 6 && nextX == 7 &&
            m_board[7][5] == nullptr && m_board[7][6] == nullptr &&
            m_board[7][7] != nullptr && m_board[7][7]->getSymbol() == 'r' &&
-           !m_firstMove[7][7] && !m_firstMove[curX][curY]) ||
+           m_firstMove[7][7] && m_firstMove[curX][curY]) ||
           (nextY == 1 && nextX == 7 &&
            m_board[7][1] == nullptr && m_board[7][2] == nullptr && m_board[7][3] == nullptr &&
            m_board[7][0] != nullptr && m_board[7][0]->getSymbol() == 'r' &&
-           !m_firstMove[7][0] && !m_firstMove[curX][curY])))) {
+           m_firstMove[7][0] && m_firstMove[curX][curY])))) {
         movePiece(curX, curY, nextX, nextY, false);
 
         if (nextY == 6 && nextX == 0) {
@@ -333,7 +336,7 @@ void Engine::valueMove() {
                             value += firstOption(xj, yj);
                             value += secondOption(xj, yj);
                             if (thirdOption) {
-                                value += 1; //Add 2 if the piece can capture the enemy piece
+                                value += 1  ; //Add 2 if the piece can capture the enemy piece
                             }
                             undoMove();
                             priorityQueue->push(make_shared<Move>(moveCheck, value));
