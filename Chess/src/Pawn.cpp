@@ -8,12 +8,12 @@ char Pawn::getSymbol() const {
 bool Pawn::isPossibleMove(int x, int y) const {
     int x1 = getX();
     int y1 = getY();
-    int direction = isWhite() ? 1 : -1;
+    int direction = isWhite() ? -1 : 1;
 
-    if (y == y1 && x == x1 + 2 * direction && isMoved()) {  //First move
+    if (y == y1 && x1 == x + 2 * direction && !isMoved()) {  //First move
         return true;
     }
-    if (x == x1 + direction && (y == y1 || y == y1 + 1 || y == y1 - 1)) {
+    if (x1 == x + direction && (y == y1 || y == y1 + 1 || y == y1 - 1)) {
         return true;
     }
     return false;
