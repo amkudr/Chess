@@ -14,6 +14,7 @@ public:
 
 
     Move(string move, int value) : move(std::move(move)), value(value) {}
+
     int operator<(const Move &other) const;
 
     string getMove() const { return move; }

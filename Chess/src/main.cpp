@@ -6,19 +6,18 @@
 #include "CustExceptions.h"
 
 
-
 int main() {
-//    string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
+    string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
 //    string board = "RNBQKBNR################################################rnbqkbnr";
 //    string board = "##############R####################Q##bk############r###########";
-    string board = "####K#########R#####################Q#bk############r###########";
+//    string board = "####K#########R####################Q##bk############r###########";
 //	string board = "##########K#############################################r#r#####";
-    Engine* e = nullptr;
+    Engine *e = nullptr;
 
 
     try {
         e = new Engine(board);
-    } catch ( UnknownPieceException &e) {
+    } catch (UnknownPieceException &e) {
         cerr << e.what() << endl;
         return 3;
 
@@ -29,29 +28,10 @@ int main() {
 
     Chess a(board);
 
-//    int codeResponse;
-//    string res;
-//
-//    // Ходы для быстрого шахмата (дурацкий мат)
-//    string moves[] = {"b6c6", "g5e5", "b7d7", "h4d8", };
-//    int moveIndex = 0;
-//    cout<< e.printBoard() <<endl;
-//    cout<<"Best Move "<< e.getBestMove()<<endl;
-//
-//
-//    while (moveIndex < 4) {
-//        res = moves[moveIndex++];
-//        codeResponse = e.checkMove(res, false);
-//        cout<< res << " " << codeResponse <<endl;
-//        cout << e.printBoard()<<endl;
-//        cout<<"Best Move "<< e.getBestMove()<<endl;
-//    }
 
     int codeResponse;
     string res = a.getInput(e->getBestMove());
-//    Sleep(1000);
-//
-//    string res = a.getInput("");
+
     while (res != "exit") {
         /*
         codeResponse value :
@@ -77,8 +57,6 @@ int main() {
 
         a.setCodeResponse(codeResponse);
         res = a.getInput(e->getBestMove());
-//        Sleep(1000);
-//        res = a.getInput("");
     }
 
     cout << endl << "Exiting " << endl;

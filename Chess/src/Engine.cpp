@@ -76,7 +76,7 @@ int Engine::checkMove(string move, bool checkmateV) {
     /**
      * Check if the move is legal
      * @param move - string with the move
-     * @param checkmateV - if true check if the move called from isCheckmate
+     * @param checkmateV - if true check if the move called from isCheckmate, this prevents infinite loop
      * @return code response
      */
 
@@ -315,6 +315,10 @@ void Engine::undoMove() {
 void Engine::valueMove() {
     /**
      * Check the value of the move
+     * by 3 options
+     * 1. Check if the piece can capture by the more weakest enemy piece
+     * 2. Check if more strongest enemy piece can be captured
+     * 3. Check if the piece can capture the enemy piece
      */
     priorityQueue->clear();
     for (int xi = 0; xi < SIZE_B; xi++) {
@@ -325,7 +329,7 @@ void Engine::valueMove() {
                         int value = 0;
                         string moveCheck =
                                 string(1, xi + 'a') + to_string(yi + 1) + string(1, xj + 'a') + to_string(yj + 1);
-                        bool thirdOption = false;
+                        bool thirdOption = false; //Check if the piece can capture the enemy piece
                         if (m_board[xj][yj] != nullptr && m_board[xj][yj]->isWhite() != white_turn) {
                             thirdOption = true;
                         }
@@ -337,7 +341,7 @@ void Engine::valueMove() {
                             value += firstOption(xj, yj);
                             value += secondOption(xj, yj);
                             if (thirdOption) {
-                                value += 1  ; //Add 2 if the piece can capture the enemy piece
+                                value += 1  ; //Add 1 if the piece can capture the enemy piece
                             }
                             undoMove();
                             priorityQueue->push(make_shared<Move>(moveCheck, value));
@@ -352,6 +356,7 @@ void Engine::valueMove() {
 int Engine::firstOption(int x, int y) {
     /**
      * Check if the piece can capture by the more weakest enemy piece
+     * return -1 if the piece can be captured
      */
 
     bool enemyColor = !white_turn;
@@ -362,7 +367,7 @@ int Engine::firstOption(int x, int y) {
                 string moveCheck =
                         string(1, xi + 'a') + to_string(yi + 1) + string(1, x + 'a') + to_string(y + 1);
                 int res = checkMove(moveCheck, false);
-                if (res == 42 || res == 41 || res == 43 || res == 44) {
+                if (res == 42 || res == 41 || res == 43 || res == 44) { //Check if the move is legal
                     white_turn = !white_turn;
                     undoMove();
                     return -1;
@@ -408,4 +413,18 @@ string Engine::getBestMove() {
         return best;
     }
     return "";
+}
+
+Engine::BoardState::BoardState(shared_ptr<Piece> (*m_board)[8], bool (*m_firstMove)[8]) {
+    /**
+     * Save the board state
+     * @param m_board - the board
+     * @param m_firstMove - the first move array
+     */
+    for (int i = 0; i < SIZE_B; i++) {
+        for (int j = 0; j < SIZE_B; j++) {
+            board[i][j] = m_board[i][j];
+            firstMove[i][j] = m_firstMove[i][j];
+        }
+    }
 }

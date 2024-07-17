@@ -14,20 +14,14 @@ const int SIZE_B = 8;
 
 class Engine {
     struct BoardState {
+        /** struct used for saving board + first move status history */
         shared_ptr<Piece> board[SIZE_B][SIZE_B];
         bool firstMove[SIZE_B][SIZE_B]{};
-
-        BoardState(shared_ptr<Piece> m_board[SIZE_B][SIZE_B], bool m_firstMove[SIZE_B][SIZE_B]) {
-            for (int i = 0; i < SIZE_B; i++) {
-                for (int j = 0; j < SIZE_B; j++) {
-                    board[i][j] = m_board[i][j];
-                    firstMove[i][j] = m_firstMove[i][j];
-                }
-            }
-        }
+        BoardState(shared_ptr<Piece> m_board[SIZE_B][SIZE_B], bool m_firstMove[SIZE_B][SIZE_B]);
     };
 
     shared_ptr<Piece> m_board[SIZE_B][SIZE_B] = {nullptr};
+
     bool m_firstMove[SIZE_B][SIZE_B] = {false};
 
     shared_ptr<PriorityQueue<Move>> priorityQueue = make_shared<PriorityQueue<Move>>();
