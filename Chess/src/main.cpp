@@ -3,24 +3,30 @@
 #include "Engine.h"
 #include <Windows.h>
 #include <iostream>
+#include "CustExceptions.h"
 
 
 
 int main() {
-    string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
+//    string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
 //    string board = "RNBQKBNR################################################rnbqkbnr";
 //    string board = "##############R####################Q##bk############r###########";
-//    string board = "####K#########R#####################Q#bk############r###########";
+    string board = "####K#########R#####################Q#bk############r###########";
 //	string board = "##########K#############################################r#r#####";
     Engine* e = nullptr;
 
 
     try {
         e = new Engine(board);
-    } catch (invalid_argument &e) {
+    } catch ( UnknownPieceException &e) {
         cerr << e.what() << endl;
-        return 1;
+        return 3;
+
+    } catch (NoKingException &e) {
+        cerr << e.what() << endl;
+        return 2;
     }
+
     Chess a(board);
 
 //    int codeResponse;

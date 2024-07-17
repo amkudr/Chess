@@ -5,6 +5,7 @@
 #include "Bishop.h"
 #include "Pawn.h"
 #include "Knight.h"
+#include "CustExceptions.h"
 
 Engine::Engine(const string &start) {
     int index = 0;
@@ -39,7 +40,7 @@ Engine::Engine(const string &start) {
                     piece = nullptr;
                     break;
                 default:
-                    piece = make_shared<Piece>(col, row, isWhite); // Placeholder for future piece types
+                    throw UnknownPieceException(pieceType);
             }
             m_board[col][row] = piece;
             m_firstMove[col][row] = true;
@@ -51,7 +52,7 @@ Engine::Engine(const string &start) {
         }
     }
     if (white_king == nullptr || black_king == nullptr) {
-        throw invalid_argument("No king found");
+        throw NoKingException();
     }
 
 }

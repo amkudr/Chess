@@ -10,4 +10,5 @@
         "Pawn.cpp"
         "PriorityQueue.cpp"
         "Move.cpp"
+        "CustExceptions.cpp"
 )
