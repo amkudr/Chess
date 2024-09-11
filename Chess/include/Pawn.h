@@ -1,12 +1,11 @@
-
-#ifndef CHESS_BISHOP_H
-#define CHESS_BISHOP_H
+#ifndef CHESS_PAWN_H
+#define CHESS_PAWN_H
 
 #include "Piece.h"
 
-class Bishop : public Piece {
+class Pawn : public Piece {
 public:
-    Bishop(int x, int y, bool isWhite);
+    Pawn(int x, int y, bool isWhite) : Piece(x, y, isWhite){};
 
     char getSymbol() const override;
 
@@ -15,8 +14,8 @@ public:
     vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const override;
 
     int getValue() const override;
+private:
 };
 
+#endif //CHESS_PAWN_H
 
-
-#endif //CHESS_BISHOP_H

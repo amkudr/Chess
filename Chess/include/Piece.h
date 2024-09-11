@@ -7,6 +7,7 @@ class Piece{
     int x;
     int y;
     bool isWhite_;
+    bool isMoved_ = false;
 
 
 public:
@@ -22,9 +23,15 @@ public:
 
     void setY(int y);
 
+    bool isFirstMove() const;
+
+    void setIsMoved(bool isMoved);
+
     virtual char getSymbol() const;
 
-    virtual bool isPossibleMove(int x, int y) const;
+    virtual bool isPossibleMove(int x_, int y_) const;
+
+    virtual int getValue() const;
 
     virtual vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const;
 

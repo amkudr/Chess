@@ -30,7 +30,7 @@ char Piece::getSymbol() const {
     return '0';
 }
 
-bool Piece::isPossibleMove(int x, int y) const {
+bool Piece::isPossibleMove(int x_, int y_) const {
     /**
      * Check if the move is possible by the piece
      */
@@ -43,4 +43,16 @@ vector<pair<int, int>> Piece::getPotentialRoadblocks(int x, int y) const {
      * Check if the way is clear for the piece to move
      */
     return {};
+}
+
+bool Piece::isFirstMove() const {
+    return isMoved_;
+}
+
+void Piece::setIsMoved(bool isMoved) {
+    isMoved_ = isMoved;
+}
+
+int Piece::getValue() const {
+    return 0;
 }

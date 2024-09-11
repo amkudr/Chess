@@ -11,8 +11,10 @@ public:
 
     char getSymbol() const override;
 
-    bool isPossibleMove(int x, int y) const override;
+    bool isPossibleMove(int x_, int y_) const override;
 
     vector<pair<int, int>> getPotentialRoadblocks(int x, int y) const override;
+
+    int getValue() const override;
 };
 #endif // KING_H
