@@ -1,2 +1,14 @@
-﻿target_sources (Chess PRIVATE "main.cpp"
-							  "Chess.cpp")
+﻿target_sources(Chess PRIVATE "main.cpp"
+        "Chess.cpp"
+        "Engine.cpp"
+        "Piece.cpp"
+        "Rook.cpp"
+        "King.cpp"
+        "Bishop.cpp"
+        "Queen.cpp"
+        "Knight.cpp"
+        "Pawn.cpp"
+        "PriorityQueue.cpp"
+        "Move.cpp"
+        "CustExceptions.cpp"
+)
