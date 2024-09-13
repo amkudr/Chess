@@ -8,5 +8,5 @@ Custom Exceptions: Handling of exceptions related to invalid moves or game state
 Priority Queue: Implemented for managing move ordering and optimization.
 
 Usage
-Run the executable after building the project:
-./chess-engine
+Run the executable after building the project: ```
+./chess-engine```
